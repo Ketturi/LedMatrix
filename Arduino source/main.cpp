@@ -1,4 +1,7 @@
-* Ketturi 2016
+﻿/*Led matrix controller
+ * 128x10 ((32x10)x4) led matrix
+ * controlled with 4bit row select lines and 32bit line shift register
+ * Ketturi 2016
  */
 
 #include <avr/pgmspace.h>
@@ -18,11 +21,10 @@ void setup() { //Set pins to outputs and inits other stuff
   pinMode(enablePin, OUTPUT);
   digitalWrite(enablePin, HIGH);
 
-
-  DDRD = B00001111;
   for (int i = 0; i < 4; i++) {
     pinMode(multiplexPin[i], OUTPUT);
   }
+  
   Serial.begin(9600);
   analogWrite(pwmPin, pwm);
   SPI.begin();
