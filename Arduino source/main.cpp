@@ -1,29 +1,28 @@
-/*Led matrix controller
- * 128x10 ((32x10)x4) led matrix
- * controlled with 4bit row select lines and 32bit line shift register
- * Ketturi 2016
+* Ketturi 2016
  */
 
 #include <avr/pgmspace.h>
 #include <SPI.h>
-#include "bitmap.h"
+#include "bitmap.h" //image data from kukkaconvert.exe by wuffe goes here, put in PROGMEM to save ram
 #include "hardware.h"
+#define ANIMATION true //animation or scrolling
 
-byte pwm = 255; //sets initial brightness
-const unsigned int rowOnTime = 1000; //how long one row is lit
+byte pwm = 150; //sets initial brightness
+const unsigned int rowOnTime = 900; //how long one row is lit
 
 const unsigned int bits = 32; //Bit count for getRowWord function, 32 bits default, don't change
-const unsigned int framerate = 1; //exponent of 2, slows display down, as it runs around 140fps, 1 disables
+const unsigned int framerate = 256; //exponent of 2, slows display down, as it runs around 140fps
 
 void setup() { //Set pins to outputs and inits other stuff
   pinMode(latchPin, OUTPUT);
   pinMode(enablePin, OUTPUT);
   digitalWrite(enablePin, HIGH);
 
+
+  DDRD = B00001111;
   for (int i = 0; i < 4; i++) {
     pinMode(multiplexPin[i], OUTPUT);
   }
-
   Serial.begin(9600);
   analogWrite(pwmPin, pwm);
   SPI.begin();
@@ -32,30 +31,30 @@ void setup() { //Set pins to outputs and inits other stuff
 void loop() {
   setBrightness(); //set brightness from serial port input, for testing purposes
 
-  /*
-  for (int frame = 0; frame < (imageWidth/32)*framerate; frame++){  //main loop, that throws image data frame by frame, row by row
-    for (byte row =1; row<=10; row++){                              //Displaythingy happens here, select row, put column data in, change row, start again...
-      shiftOut32(getRowWord((frame/framerate)*32, row, imageWidth, imageData)); //Shifts one line per row with selected frame and row data
-      multiplexRow(row);               //Selects next row
-     }
-  */
-
+#if (ANIMATION)
+  for (int frame = 0; frame < (imageWidth / 128)*framerate; frame++) { //main loop, that throws image data frame by frame, row by row
+    for (byte row = 1; row <= 10; row++) {                          //Displaythingy happens here, select row, put column data in, change row, start again...
+      multiplexRow(row);
+      refreshDisplay((frame / framerate) * 128, row);
+    }
+  }
+#else
   for (int frame = 0; frame < imageWidth * framerate; frame++) {
     for (byte row = 1; row <= 10; row++) { //Displaythingy happens here, select row, put column data in, change row, start again...
       multiplexRow(row);
-      frame = frame / framerate;
-      refreshDisplay(frame, row);
+      refreshDisplay(frame / framerate, row);
     }
   }
+#endif
 }
 
 
-void refreshDisplay(int frame, byte row) {
+void refreshDisplay(int col, byte row) {
   digitalWrite(latchPin, LOW);
-  shiftOut32(getRowWord(frame + 96, row, imageWidth, imageData)); //last panel
-  shiftOut32(getRowWord(frame + 64, row, imageWidth, imageData)); //third panel
-  shiftOut32(getRowWord(frame + 32, row, imageWidth, imageData)); //second panel
-  shiftOut32(getRowWord(frame , row, imageWidth, imageData));     //first panel
+  shiftOut32(getRowWord(col + 96, row, imageWidth, imageData)); //last panel
+  shiftOut32(getRowWord(col + 64, row, imageWidth, imageData)); //third panel
+  shiftOut32(getRowWord(col + 32, row, imageWidth, imageData)); //second panel
+  shiftOut32(getRowWord(col , row, imageWidth, imageData));     //first panel
   digitalWrite(latchPin, HIGH);
 
   digitalWrite(enablePin, LOW);
