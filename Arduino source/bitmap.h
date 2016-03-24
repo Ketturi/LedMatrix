@@ -12,4 +12,3 @@ const unsigned long imageData[48*2]= { //"KETTURI ELECTRONICS & TAMPERE HACKLAB"
  
 };
 
-

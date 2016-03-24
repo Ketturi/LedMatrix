@@ -12,4 +12,3 @@
 
 const int multiplexPin[] = {0, 1, 2, 3}; //Row decoder pins, 0-11 dec values corresponds lines, 1-10 usable as 0 and 11 lines are missing all leds
 
-
