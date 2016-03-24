@@ -1,0 +1,71 @@
+(.../pcb-gcode-3.6.2.4/pcb-gcode.ulp)
+(Copyright 2005 - 2012 by John Johnson)
+(See readme.txt for licensing terms.)
+(This file generated from the board:)
+(.../Hardware/ControlPCB/ControlBoard.brd)
+(Current profile is .../pcb-gcode-3.6.2.4/profiles/generic.pp  )
+(This file generated 23.3.2016 15:38)
+(Settings from pcb-machine.h)
+(spindle on time = 0.0000)
+(spindle speed = 20000.0000)
+(tool change at 0.0000 0.0000 25.4000 )
+(feed rate xy = F0.00  )
+(feed rate z  = F508.00 )
+(Z Axis Settings)
+(  High     Up        Down     Drill)
+(38.1000 	2.5400 	-0.2000 	-1.5500 )
+(Settings from pcb-defaults.h)
+(isolate min = 0.0254)
+(isolate max = 0.5080)
+(isolate step = 0.1270)
+(Generated top outlines, top drill, )
+(Unit of measure: mm)
+( Tool|       Size       |  Min Sub |  Max Sub |   Count )
+( T01  2.000mm 0.0787in 0.0000in 0.0000in )
+( T02  3.200mm 0.1260in 0.0000in 0.0000in )
+(Metric Mode)
+G21
+(Absolute Coordinates)
+G90
+S20000
+G00 Z38.1000 
+G00 X0.0000 Y0.0000 
+M03
+G04 P0.000000
+M05
+G00 Z25.4000 
+M06 T01  ; 2.0000 
+G01 Z0.0000 F508.00 
+M06 
+G00 Z2.5400 
+M03
+G04 P0.000000
+G00 Z2.540000
+G00 X4.0000 Y40.0000 
+G01 Z-1.5500 F508.00 
+G01 Z2.540000
+(R2.5400  P0.000000)
+G00 X96.0000 Y40.0000 
+G01 Z-1.550000
+G01 Z2.540000
+M05
+G00 Z25.4000 
+G00 X0.0000 Y0.0000 
+M06 T02  ; 3.2000 
+G01 Z0.0000 F508.00 
+M06 
+G00 Z2.5400 
+M03
+G04 P0.000000
+G00 Z2.540000
+G00 X4.0000 Y7.5000 
+G01 Z-1.5500 F508.00 
+G01 Z2.540000
+(R2.5400  P0.000000)
+G00 X96.0000 Y7.5000 
+G01 Z-1.550000
+G01 Z2.540000
+T01 
+G00 Z38.1000 
+M05
+M02
