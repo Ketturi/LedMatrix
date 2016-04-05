@@ -33,12 +33,12 @@ int frame = 0;
 void setup() { //Set pins to outputs and inits other stuff
   pinMode(16, SPECIAL); //Set GPIO16 to default function, controls reset
 
-  //Important, do not remove these, or update over wifi wont work!
+  //Important, do not remove these, or updating over wifi wont work!
   //*******************************
   setWiFi();   //Start WiFiManager
   otaUpdate(); //Enable ota updates
   //*******************************
-  
+
   pinMode(0, FUNCTION_0);
   pinMode(1, FUNCTION_3);
   pinMode(2, FUNCTION_0);
@@ -54,7 +54,7 @@ void setup() { //Set pins to outputs and inits other stuff
   digitalWrite(enablePin, HIGH);
 
   for (int i = 0; i < 4; i++) {
-    pinMode(multiplexPin[i], OUTPUT);
+    pinMode(rowAdrsPin[i], OUTPUT);
   }
 
   analogWrite(pwmPin, pwm); //Set initial brightness
@@ -63,22 +63,25 @@ void setup() { //Set pins to outputs and inits other stuff
   Serial.end();
 }
 
-void loop() {
-  ArduinoOTA.handle(); //Checks for incoming update
+void loop() { //loops constantly
+  ArduinoOTA.handle(); //Checks for incoming update, please don't remove!
+  refreshDisplay();
+}
 
+void refreshDisplay() { //Updates whole display
 #if (ANIMATION) //shows single frames crating animation
-  unsigned long currentMillis = millis(); 
+  unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= framerate) { //crude timer for frame rate.
     previousMillis = currentMillis;
-    if (frame < (imageWidth / 128 ))
+    if (frame < (imageWidth / ledColumns ))
       frame++;
     else
       frame = 0;
   }
 
-  for (byte row = 1; row <= 10; row++) {  //Displaythingy happens here, select row, put column data in, change row, start again...
-    multiplexRow(row);
-    refreshDisplay(frame * 128, row);
+  for (byte row = firstRowAdrs; row <= lastRowAdrs; row++) {  //Displaythingy happens here, select row, put column data in, change row, start again...
+    selectRow(row);
+    sendColumn(frame * ledColumns, row);
   }
 
 #else //shows image that is scrolling from right to left
@@ -91,14 +94,14 @@ void loop() {
       frame = 0;
   }
 
-  for (byte row = 1; row <= 10; row++) { //Displaythingy happens here, select row, put column data in, change row, start again...
-    multiplexRow(row);
-    refreshDisplay(frame, row);
+  for (byte row = firstRowArds; row <= lastRowAdrs; row++) { //Displaythingy happens here, select row, put column data in, change row, start again...
+    selectRow(row);
+    sendColumn(frame, row);
   }
 #endif
 }
 
-void refreshDisplay(int col, byte row) { //Toggles control lines and outputs display data.
+void sendColumn(int col, byte row) { //Toggles control lines and outputs display data.
   digitalWrite(latchPin, LOW);
   shiftOut32(getRowWord(col + 96, row, imageWidth, imageData)); //last panel
   shiftOut32(getRowWord(col + 64, row, imageWidth, imageData)); //third panel
@@ -113,18 +116,18 @@ void refreshDisplay(int col, byte row) { //Toggles control lines and outputs dis
   digitalWrite(enablePin, HIGH);
 }
 
-void multiplexRow(byte multiRow) { //Selects which row gets illuminated, 0-11 in four bits, 1-10 usable as display
+void selectRow(byte RowAdrs) { //Selects which row gets illuminated, 4Bit address
   for (int b = 0; b < 4; b++) {
-    if ((0x01 & multiRow) < 0x01)
-      digitalWrite(multiplexPin[b], LOW);
+    if ((0x01 & RowAdrs) < 0x01)
+      digitalWrite(rowAdrsPin[b], LOW);
     else
-      digitalWrite(multiplexPin[b], HIGH);
+      digitalWrite(rowAdrsPin[b], HIGH);
     multiRow >>= 1;
   }
 }
 
 void shiftOut32(unsigned long input) { //32Bit shift out with HW SPI, sends data in 8bit pieces to shift register
-  SPI.beginTransaction(SPISettings(25000000, LSBFIRST, SPI_MODE0)); //25Mhz, LSBFIRST, clock polarity and phase
+  SPI.beginTransaction(SPISettings(SPISPEED, LSBFIRST, SPI_MODE0)); //25Mhz, LSBFIRST, clock polarity and phase
   SPI.transfer(input >> 0);
   SPI.transfer(input >> 8);
   SPI.transfer(input >> 16);
