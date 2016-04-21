@@ -31,4 +31,3 @@ const int rowAdrsPin[] = {0, 1, 2, 3}; //Row decoder pins, 0-11 dec values corre
 #define ledColumns 128 //How many pixels in one row
 #define firstRowAdrs 1 //first row address, 1 for 10 row display, 0 for 12 row display
 #define lastRowAdrs 10 //last row address, 10 for 10 row display, 11 for 12 row display
-
