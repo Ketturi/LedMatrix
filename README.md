@@ -18,6 +18,8 @@ Code and control board is easily adaptable to publicly obtainable LED matrix dis
 
 ## Software
 ESP8266 module runs arduino sketch. Arduino IDE needs [Board core files](https://github.com/esp8266/Arduino) to be able to compile software for module.
+Use the arduino.org IDE 1.7.9! Arduino.cc IDE is not working due issues with arduino-builder. You need to install board files and libraries manually.
+
 Simple function converts binary bitmap data to column data corresponding selected row and column. Data is then transferred trough SPI to column led drivers (32 bit shift register in each module daisychained together)
 Row is selected trough 4-bit address. 
 
