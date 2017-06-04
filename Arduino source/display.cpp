@@ -1,3 +1,12 @@
+/*
+  Glue library for Adafruit GFX library.
+  Implements functions between display hardware and graphics library.
+
+  This is highly customized for spesific type of led matrix display
+  and for esp8266.
+  Ketturi Fox 2017
+*/
+
 #include "display.h"
 #include <pgmspace.h>
 #include <SPI.h>
