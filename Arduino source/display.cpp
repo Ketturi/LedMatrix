@@ -172,10 +172,12 @@ void ICACHE_RAM_ATTR FoxMatrix::updateDisplay(void) {
     uint8_t *rowptr = ptr + (DISPLAYWIDTH * row) / 8; //Gets data from display buffer in 8bit packets
 
     //Converts 8bit packets to 32bit*panels and outputs it to pixel drivers
+    SPI.beginTransaction(SPISettings(SPISPEED, LSBFIRST, SPI_MODE0)); //25Mhz, LSBFIRST, clock polarity and phase
     for (int block = DISPLAYWIDTH / 32 - 1; block >= 0; block--) {
       uint32_t scanline = rowptr[block * 4 + 0] << 24 | rowptr[block * 4 + 1] << 16 | rowptr[block * 4 + 2] << 8 | rowptr[block * 4 + 3];
-      shiftOut32(scanline);
+      SPI.write32(scanline);
     }
+    SPI.endTransaction();
 
     GPOC = (1 << enablePin); //Set pixel driver output on
     /*Delay for leds being enabled, affects how bright display is.

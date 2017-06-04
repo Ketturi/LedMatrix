@@ -6,6 +6,9 @@
 */
 
 #include <Arduino.h>
+#include "sscanf.h"
+#include <time.h>
+#include <TimeLib.h>
 
 #include <ArduinoJson.h>
 #include "RestClient.h"
@@ -31,7 +34,7 @@ class BusStop
       return arrivalBuffer[i].line();
     }
 
-    String returnTime(unsigned int i) const {
+    time_t returnTime(unsigned int i) const {
       return arrivalBuffer[i].time();
     }
 
@@ -44,7 +47,33 @@ class BusStop
 
     char path[43]; //Path that is parsed from resource path and stop number
 
-    String jsonData; 
+    String jsonData;
+
+    time_t str2time(const char * timestring) { //Converts ISO time string to unix timestamp
+
+      int year = 0,
+          month = 0,
+          day = 0,
+          hour = 0,
+          minute = 0,
+          second = 0,
+          zonehour = 0,
+          zonemin = 0;
+      
+      if (sscanf(timestring, "%4d-%2d-%2dT%2d:%2d:%2d%3d:%2d",
+                 &year, &month, &day, &hour, &minute, &second, &zonehour, &zonemin)); {
+
+        tmElements_t tmSet;
+        tmSet.Year = CalendarYrToTm(year);
+        tmSet.Month = month;
+        tmSet.Day = day;
+        tmSet.Hour = hour - zonehour;
+        tmSet.Minute = minute - zonemin;
+        tmSet.Second = second;
+
+        return makeTime(tmSet);
+      }
+    }
 };
 
 

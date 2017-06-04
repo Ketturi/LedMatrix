@@ -2,6 +2,9 @@
   10 pixels high variable width font for LED matrix display
   created by
   Ketturi Fox 2017
+
+  This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+  https://creativecommons.org/licenses/by-sa/4.0/
 */
 
 const uint8_t FoxFontBitmaps[] PROGMEM = {

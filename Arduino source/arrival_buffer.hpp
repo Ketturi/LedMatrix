@@ -10,34 +10,31 @@ class Arrival {
   public:
     // Maximum length not including the terminating null character.
     static const int MAX_LINE_LENGTH = 4;
-    static const int MAX_TIME_LENGTH = 25;
 
     Arrival() {
       _line[0] = '\0';
-      _time[0] = '\0';
     }
 
-    Arrival(const char* line, const char* time) {
+    Arrival(const char* line, time_t time) {
       // strncpy copies also the terminating null character, unless maximum length is reached.
       strncpy(_line, line, MAX_LINE_LENGTH);
-      strncpy(_time, time, MAX_TIME_LENGTH);
+      _time = time;
 
       // Add terminating null character for cases where the maximum length is reached.
       _line[MAX_LINE_LENGTH] = '\0';
-      _time[MAX_TIME_LENGTH] = '\0';
     }
 
     const char* line() const {
       return _line;
     }
-    const char* time() const {
+    time_t time() const {
       return _time;
     }
 
   private:
     // Arrays, unlike pointers, are copied properly by the default generated assignment operator and copy constructor.
     char _line[MAX_LINE_LENGTH + 1];
-    char _time[MAX_TIME_LENGTH + 1];
+    time_t _time;
 };
 
 
@@ -47,7 +44,7 @@ class ArrivalBuffer {
 
     ArrivalBuffer() : _next(0), _size(0) {}
 
-    void insert(const char* line, const char* time) {
+    void insert(const char* line, time_t time) {
       _list[_next++] = Arrival(line, time);
       _next = _next % CAPACITY;
       if (_size < 8) {

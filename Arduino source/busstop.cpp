@@ -32,7 +32,7 @@ void BusStop::updateBuffer(void) { //Send GET and parse json when called
     const char* lineRef = entry["lineRef"];
     const char* expectedArrivalTime = entry["call"]["expectedArrivalTime"];
 
-    arrivalBuffer.insert(lineRef, expectedArrivalTime); //Store pared JSON data to accessible array
+    arrivalBuffer.insert(lineRef, str2time(expectedArrivalTime)); //Store pared JSON data to accessible array
   }
 }
 
